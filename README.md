@@ -6,5 +6,7 @@ diretório dos arquivos.
 
 Instruções de uso:
   1 - Digite o nome do arquivo para aprendizado (sem espaços antes ou depois - de alguma forma isso atrapalha a calibração)
+
   2 -Digite o nome do arquivo para TESTE (sem espaços antes ou depois - de alguma forma isso atrapalha a calibração)
+  
   3 - Aguarde os resultados
