@@ -1,0 +1,28 @@
+int contadorWhile = 0;
+    do {
+      
+      printf("Posiçao dentro do while %d", contadorWhile);
+      fgets(string, 14, fpAprende);
+      fscanf(fpAprende, "%f;%f;%f", &vetorLinhaTemporario[0], &vetorLinhaTemporario[1], &vetorLinhaTemporario[2]);
+      // printf("%.2f %.2f %.2f\n", vetorLinhaTemporario[0], vetorLinhaTemporario[1], vetorLinhaTemporario[2]);
+
+      int cont;
+      for ( cont = 0; cont < 2; cont++ ) {
+        valorAprendido += pesos[cont] * vetorLinhaTemporario[cont];
+      }
+      valorAprendido = valorAprendido > 0 ? 1 : 0;
+
+      erro = vetorLinhaTemporario[2] - valorAprendido;
+      if ( erro == 0 ) {
+        printf("Acertou ó\n");
+      } else {
+        printf("Errou\n");
+      }
+      
+      for ( cont = 0; cont < 2; cont++ ) {
+        pesos[cont] = pesos[cont] + ( alfa * erro * vetorLinhaTemporario[cont] );
+      }
+
+      contadorWhile++;
+
+    } while (!feof(fpAprende));

@@ -4,35 +4,80 @@
 #include <time.h>
 
 //  Aqui ficarão os protótipos das funções
-int retornaAleatorio();
+float retornaAleatorio();
 
 int main(void) {
 
-  int i, j;
-  int pesos[2] = {retornaAleatorio(), retornaAleatorio()};
-  FILE *fp;
+  float i, j, contLoopTeste;
+  int contadorExterno = 0;
+  float pesos[2] = {retornaAleatorio(), retornaAleatorio()};
   float vetorLinhaTemporario[3] = {};
+  FILE *fpAprende, *fpTeste;
   char string[14];
   char valorEmString[5];
-  char diretorio[500];
+  char diretorioAprendizado[500], diretorioTeste[500];
   float valorAprendido = 0;
   float erro = 0;
-  float alfa = 0.001;
+  float alfa = 0.05;
+  float acertoAprendizado = 0;
+  float acertoTeste = 0;
+  float percentualAprendido = 0;
+  float percentualAcertoTeste = 0;
 
-  printf("Digite o diretório ");
-  scanf("%s", diretorio);
+  printf("Digite o caminho do arquivo de aprendizagem: ");
+  scanf("%s", diretorioAprendizado);
 
-  fp = fopen(diretorio, "r");
+  printf("Digite o caminho do arquivo de teste: ");
+  scanf("%s", diretorioTeste);
 
-  if(fp == NULL) {
-    printf("Não é possivel ler o arquivo, redigite o nome do arquivo");
+  fpAprende = fopen(diretorioAprendizado, "r");
+  fpTeste = fopen(diretorioTeste, "r");
+
+  while(fpAprende == NULL) {
+    printf("Não foi possivel ler o arquivo de aprendizado , redigite o caminho do arquivo: ");
+    scanf("%s", diretorioAprendizado);
+    fpAprende = fopen(diretorioAprendizado, "r");
+  }
+  while(fpTeste == NULL) {
+    printf("Não foi possivel ler o arquivo de teste , redigite o caminho do arquivo: ");
+    scanf("%s", diretorioTeste);
+    fpTeste = fopen(diretorioTeste, "r");
   }
 
-  do {
+  //Aprendizado
+  for ( i = 0; i <= 200; i++ ) {
+    if ( i != 0 ) {
+      fpAprende = fopen(diretorioAprendizado, "r");
+    }
+    for( j = 0; !feof(fpAprende); j++ ) {
 
-    fgets(string, 14, fp);
-    fscanf(fp, "%f;%f;%f", &vetorLinhaTemporario[0], &vetorLinhaTemporario[1], &vetorLinhaTemporario[2]);
-    printf("%.2f %.2f %.2f\n", vetorLinhaTemporario[0], vetorLinhaTemporario[1], vetorLinhaTemporario[2]);
+      fgets(string, 14, fpAprende);
+      fscanf(fpAprende, "%f;%f;%f", &vetorLinhaTemporario[0], &vetorLinhaTemporario[1], &vetorLinhaTemporario[2]);
+
+      int cont;
+      for ( cont = 0; cont < 2; cont++ ) {
+        valorAprendido += pesos[cont] * vetorLinhaTemporario[cont];
+      }
+      valorAprendido = valorAprendido > 0 ? 1 : 0;
+
+      erro = vetorLinhaTemporario[2] - valorAprendido;
+      if ( (erro == 0) && (i == 200) ) {
+        acertoAprendizado++;
+      }
+
+      for ( cont = 0; cont < 2; cont++ ) {
+        pesos[cont] = pesos[cont] + ( alfa * erro * vetorLinhaTemporario[cont] );
+      }
+
+    }
+  }
+  percentualAprendido = (acertoAprendizado/(j-1))*100;
+
+  //Teste
+  for ( j = 0; !feof(fpTeste); j++ ) {
+
+    fgets(string, 14, fpTeste);
+    fscanf(fpTeste, "%f;%f;%f", &vetorLinhaTemporario[0], &vetorLinhaTemporario[1], &vetorLinhaTemporario[2]);
 
     int cont;
     for ( cont = 0; cont < 2; cont++ ) {
@@ -41,27 +86,25 @@ int main(void) {
     valorAprendido = valorAprendido > 0 ? 1 : 0;
 
     erro = vetorLinhaTemporario[2] - valorAprendido;
-    if ( erro == 0 ) {
-      printf("Acertou ó");
-    }
-    
-    for ( cont = 0; cont < 2; cont++ ) {
-      pesos[cont] = pesos[cont] + ( alfa * erro * vetorLinhaTemporario[cont] );
+    if (erro == 0) {
+      acertoTeste++;
     }
 
-  } while (!feof(fp));
-  
+  }
+  percentualAcertoTeste = (acertoTeste/(j-1))*100;
 
-  fclose(fp);
+  printf("Percentual acerto de aprendizagem: %1.2lf%%\n", percentualAprendido);
+  printf("Percentual acerto de teste: %1.2lf%%\n", percentualAcertoTeste);
+  printf("Valores encontrados para W(Pesos): %f %f\n", pesos[0], pesos[1]);
 
+  fclose(fpAprende);
+  fclose(fpTeste);
 
   return 0;
 }
 
-
 //Funções
-
-int retornaAleatorio() {
+float retornaAleatorio() {
 
   srand(time(NULL));
 
