@@ -1,4 +1,4 @@
-# projetoMachineLearning
+# projetoMachineLearning - Por Pedro Igor Rocha
 Projeto de Machine Learning para Laboratório de programação
 
 OBS: Quando a porcentagem de aprendizado e teste forem iguais, experimente rodar novamente com atenção ao
