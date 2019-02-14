@@ -8,13 +8,11 @@ float retornaAleatorio();
 
 int main(void) {
 
-  float i, j, contLoopTeste;
-  int contadorExterno = 0;
+  float i, j;
   float pesos[2] = {retornaAleatorio(), retornaAleatorio()};
   float vetorLinhaTemporario[3] = {};
   FILE *fpAprende, *fpTeste;
   char string[14];
-  char valorEmString[5];
   char diretorioAprendizado[500], diretorioTeste[500];
   float valorAprendido = 0;
   float erro = 0;
@@ -54,20 +52,24 @@ int main(void) {
       fgets(string, 14, fpAprende);
       fscanf(fpAprende, "%f;%f;%f", &vetorLinhaTemporario[0], &vetorLinhaTemporario[1], &vetorLinhaTemporario[2]);
 
-      int cont;
-      for ( cont = 0; cont < 2; cont++ ) {
-        valorAprendido += pesos[cont] * vetorLinhaTemporario[cont];
-      }
-      valorAprendido = valorAprendido > 0 ? 1 : 0;
+      if ( j != 0 ) {
 
-      erro = vetorLinhaTemporario[2] - valorAprendido;
-      if ( (erro == 0) && (i == 200) ) {
-        acertoAprendizado++;
+        int cont;
+        for ( cont = 0; cont < 2; cont++ ) {
+          valorAprendido += pesos[cont] * vetorLinhaTemporario[cont];
+        }
+        valorAprendido = valorAprendido > 0 ? 1 : 0;
+
+        erro = vetorLinhaTemporario[2] - valorAprendido;
+        if ( (erro == 0) && (i == 200) ) {
+          acertoAprendizado++;
+        }
+
+        for ( cont = 0; cont < 2; cont++ ) {
+          pesos[cont] = pesos[cont] + ( alfa * erro * vetorLinhaTemporario[cont] );
+        }
       }
 
-      for ( cont = 0; cont < 2; cont++ ) {
-        pesos[cont] = pesos[cont] + ( alfa * erro * vetorLinhaTemporario[cont] );
-      }
 
     }
   }
